@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import glob
 from PIL import Image, ImageDraw
 
 from check_file import check_processed_file

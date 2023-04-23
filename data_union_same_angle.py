@@ -1,11 +1,4 @@
-from tkinter import *
-from tkinter import ttk
-import pyautogui
-import time
 import pandas as pd
-from multiprocessing import *
-from datetime import datetime
-import math
 import os
 
 from check_file import check_processed_file
