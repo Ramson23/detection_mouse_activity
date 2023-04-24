@@ -1,7 +1,4 @@
-import numpy
 import pandas as pd
-import math
-from statistics import mean
 import os
 
 from check_file import check_processed_file
