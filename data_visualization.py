@@ -18,7 +18,7 @@ def create_picture(file_name, source_dir_name, cont_dir_name):
         row = data.iloc[i]
 
         if row.Marker == 'start' or row.Marker == 'stop':
-            draw.ellipse([(row.X - 10, row.Y - 10), (row.X + 10, row.Y + 10)], fill='green', outline='green')
+            draw.ellipse([(row.X - 7, row.Y - 7), (row.X + 7, row.Y + 7)], fill='green', outline='green')
         else:
             draw.ellipse([(row.X - 5, row.Y - 5), (row.X + 5, row.Y + 5)], fill='red', outline='green')
 
