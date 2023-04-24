@@ -57,5 +57,5 @@ if 'mouse_data' in lst_dir:
             else:
                 union_df = pd.concat([union_df, row], ignore_index=True)
 
-        union_df.to_csv('mouse_union/' + mouse_file)
+        union_df.to_csv('mouse_union/' + mouse_file, index=False)
         print('Файл mouse_union/' + mouse_file + ' успешно сохранен')
