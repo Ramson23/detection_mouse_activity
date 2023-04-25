@@ -88,10 +88,13 @@ def calculate_square(notes):
 def calculate_time(notes):
     return notes[-1]['T'] - notes[0]['T']
 
+def calculate_condition(notes):
+    return notes[0].Condition
+
 
 if __name__ == '__main__':
 
-    output_columns = ['section_count', 'max_angle', 'max_section', 'average_section', 'square', 'time']
+    output_columns = ['section_count', 'max_angle', 'max_section', 'average_section', 'square', 'time', 'condition']
     path = './'
     lst_dir = os.listdir(path)
 
@@ -114,7 +117,8 @@ if __name__ == '__main__':
                 max_angle = calculate_angle(union_seg)
                 square = calculate_square(default_seg)
                 time = calculate_time(union_seg)
-                exc_row = [[section_count, max_angle, max_section, average_section, square, time]]
+                condition = calculate_condition(union_seg)
+                exc_row = [[section_count, max_angle, max_section, average_section, square, time, condition]]
                 df_out = pd.concat([df_out, pd.DataFrame(data=exc_row, columns=output_columns)], ignore_index=True)
 
             df_out.to_csv('extracted_data/' + file, index=False)
