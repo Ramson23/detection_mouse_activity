@@ -1,7 +1,7 @@
 import os
 
-def check_processed_file(unprocessed_mouse_file, dir_name):
 
+def check_processed_file(unprocessed_mouse_file, dir_name):
     os.makedirs(dir_name, exist_ok=True)
     existed_mouse_file = os.listdir('./' + dir_name)
 

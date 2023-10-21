@@ -16,6 +16,7 @@ pyautogui считывает координаты в одно и то же вр�
 следующие координаты, настает через 1 миллисекунду.
 '''
 
+
 def btnstr_click(event):
     global start, num_txt_curr
     start.value = 1
@@ -23,26 +24,30 @@ def btnstr_click(event):
     p = Process(target=record_data, args=(num_txt_curr, start))
     p.start()
 
+
 def btnstop_click(event):
     global start
     start.value = 0
     txt_curr_proc.set('Данные собраны и сохранены')
+
 
 def btn0_click():
     txt_curr.set('Уставший')
     global num_txt_curr
     num_txt_curr.value = 0
 
+
 def btn1_click():
     txt_curr.set('Бодрый')
     global num_txt_curr
     num_txt_curr.value = 1
 
+
 def clean_data(data):
     n = len(data) - 1
     i = 0
-    while(i < n):
-        if data[i][4] == 'start' and data[i+1][4] == 'stop':
+    while (i < n):
+        if data[i][4] == 'start' and data[i + 1][4] == 'stop':
             data.pop(i)
             data.pop(i)
             n -= 2
@@ -70,7 +75,8 @@ def record_data(num, st):
                 if marker != 'start':
                     if (x - sx) ** 2 + (y - sy) ** 2 > 100:
                         sx, sy = x, y
-                        data.append([str(datetime.now()), x, y, (time_current - time_initial) / 1000000, marker, num.value])
+                        data.append(
+                            [str(datetime.now()), x, y, (time_current - time_initial) / 1000000, marker, num.value])
                 else:
                     data.append([str(datetime.now()), x, y, (time_current - time_initial) / 1000000, marker, num.value])
                     marker = 'normal'
@@ -79,17 +85,19 @@ def record_data(num, st):
                 if marker == 'normal':
                     if (time_current - time_begin) / 1000000 > 150:
                         marker = 'stop'
-                        data.append([str(datetime.now()), x, y, (time_current - time_initial) / 1000000, marker, num.value])
+                        data.append(
+                            [str(datetime.now()), x, y, (time_current - time_initial) / 1000000, marker, num.value])
                         marker = 'start'
     except:
         print('Выполнение закончилось')
     finally:
-        data[-1][-2] = 'stop' #присваиваем последнему маркеру значение stop
+        data[-1][-2] = 'stop'  # присваиваем последнему маркеру значение stop
         print('Данные собраны')
         clean_data(data)
         df = pd.DataFrame(data, columns=data_column)
         os.makedirs('mouse_data', exist_ok=True)
         df.to_csv('mouse_data/' + datetime.now().strftime("%H.%M.%S_%Y-%m-%d") + '.csv', index=False)
+
 
 if __name__ == '__main__':
     freeze_support()

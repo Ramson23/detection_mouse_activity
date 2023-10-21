@@ -4,8 +4,8 @@ from PIL import Image, ImageDraw
 
 from check_file import check_processed_file
 
-def create_picture(file_name, source_dir_name, cont_dir_name):
 
+def create_picture(file_name, source_dir_name, cont_dir_name):
     path = source_dir_name + '/' + file_name
     data = pd.read_csv(path)
 
@@ -28,6 +28,7 @@ def create_picture(file_name, source_dir_name, cont_dir_name):
 
     filename = cont_dir_name + '/' + file_name[:-4] + ".jpg"
     image.save(filename)
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':

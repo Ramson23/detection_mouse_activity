@@ -19,8 +19,8 @@ from geometry_operations import get_angle, get_dist, get_dist_point_line
     площадь (сумма отклонений каждой точки от прямой, соединяющей start и stop)
 """
 
-def extract_segments(df):
 
+def extract_segments(df):
     output_list = []
     internal_index = 0
 
@@ -37,14 +37,15 @@ def extract_segments(df):
 
     return output_list
 
+
 def calculate_section(notes):
     max_sec = 0
     all_sec = 0
     for i in range(len(notes) - 1):
         x_1 = notes[i].X
         y_1 = notes[i].Y
-        x_2 = notes[i+1].X
-        y_2 = notes[i+1].Y
+        x_2 = notes[i + 1].X
+        y_2 = notes[i + 1].Y
         curr_sec = get_dist(x_1, y_1, x_2, y_2)
         all_sec += curr_sec
         if curr_sec > max_sec:
@@ -52,16 +53,16 @@ def calculate_section(notes):
 
     return all_sec / (len(notes) - 1), max_sec
 
-def calculate_angle(notes):
 
+def calculate_angle(notes):
     max_angle = 0
     for i in range(len(notes) - 2):
         x_1 = notes[i].X
         y_1 = notes[i].Y
-        x_2 = notes[i+1].X
-        y_2 = notes[i+1].Y
-        x_3 = notes[i+2].X
-        y_3 = notes[i+2].Y
+        x_2 = notes[i + 1].X
+        y_2 = notes[i + 1].Y
+        x_3 = notes[i + 2].X
+        y_3 = notes[i + 2].Y
 
         first_angle = get_angle(x_1, y_1, x_2, y_2)
         second_angle = get_angle(x_2, y_2, x_3, y_3)
@@ -71,6 +72,7 @@ def calculate_angle(notes):
             max_angle = curr_angle
 
     return max_angle
+
 
 def calculate_square(notes):
     line_x_1 = notes[0].X
@@ -85,8 +87,10 @@ def calculate_square(notes):
 
     return sum_dist / (len(notes) - 2)
 
+
 def calculate_time(notes):
     return notes[-1]['T'] - notes[0]['T']
+
 
 def calculate_condition(notes):
     return notes[0].Condition
@@ -123,13 +127,3 @@ if __name__ == '__main__':
 
             df_out.to_csv('extracted_data/' + file, index=False)
             print('Файл extracted_data/' + file + ' успешно обработан')
-
-
-
-
-
-
-
-
-
-
