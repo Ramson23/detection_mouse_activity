@@ -99,7 +99,7 @@ def calculate_condition(notes):
 
 if __name__ == '__main__':
 
-    output_columns = ['section_count_ratio', 'max_angle', 'max_section', 'average_section', 'square', 'time', 'condition']
+    output_columns = ['section_count_ratio', 'section_count_ratio_str',  'max_angle', 'max_section', 'average_section', 'square', 'time', 'condition']
     path = './'
     lst_dir = os.listdir(path)
 
@@ -118,12 +118,13 @@ if __name__ == '__main__':
 
             for union_seg, default_seg in zip(ls_union, ls_default):
                 section_count_ratio = (len(union_seg) - 1) / (len(default_seg) - 1)
+                section_count_ratio_str = f'{(len(union_seg) - 1)} / {(len(default_seg) - 1)}'
                 average_section, max_section = calculate_section(union_seg)
                 max_angle = calculate_angle(union_seg)
                 square = calculate_square(default_seg)
                 time = calculate_time(union_seg)
                 condition = calculate_condition(union_seg)
-                exc_row = [[section_count_ratio, max_angle, max_section, average_section, square, time, condition]]
+                exc_row = [[section_count_ratio, section_count_ratio_str, max_angle, max_section, average_section, square, time, condition]]
                 df_out = pd.concat([df_out, pd.DataFrame(data=exc_row, columns=output_columns)], ignore_index=True)
 
             df_out.to_csv('extracted_data/' + file, index=False)
