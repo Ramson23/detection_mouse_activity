@@ -19,6 +19,7 @@ from geometry_operations import get_angle, get_dist, get_dist_point_line
     площадь (сумма отклонений каждой точки от прямой, соединяющей start и stop)
 """
 
+#new
 
 def extract_segments(df):
     output_list = []
