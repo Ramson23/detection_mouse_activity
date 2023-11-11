@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 import pyautogui
 import time
+from pynput import mouse
 import pandas as pd
 from multiprocessing import *
 from datetime import datetime
@@ -12,8 +13,7 @@ import os
 '''
 '''
 Заметки:
-pyautogui считывает координаты в одно и то же время несколько раз. Следующее время, в которое будут считаны
-следующие координаты, настает через 1 миллисекунду.
+Отрезок активности измеряется от клика до клика мыши.
 '''
 
 
@@ -46,7 +46,7 @@ def btn1_click():
 def clean_data(data):
     n = len(data) - 1
     i = 0
-    while (i < n):
+    while i < n:
         if data[i][4] == 'start' and data[i + 1][4] == 'stop':
             data.pop(i)
             data.pop(i)
@@ -56,8 +56,20 @@ def clean_data(data):
 
 
 def record_data(num, st):
+    def on_click(x_in, y_in, button, pressed):
+        nonlocal marker
+        if button == mouse.Button.left:
+            if pressed:
+                marker = 'stop'
+                data.append(
+                    [str(datetime.now()), x_in, y_in, (time_current - time_initial) / 1000000, marker, num.value])
+            else:
+                marker = 'start'
+
+    listener = mouse.Listener(on_click=on_click)
+    listener.start()
+
     time_initial = time.time_ns()
-    time_begin = time_initial
     x_old, y_old = pyautogui.position()
     sx, sy = x_old, y_old
 
@@ -72,22 +84,14 @@ def record_data(num, st):
             x, y = pyautogui.position()
             if not (x == x_old and y == y_old):
                 x_old, y_old = x, y
-                if marker != 'start':
+                if marker == 'normal':
                     if (x - sx) ** 2 + (y - sy) ** 2 > 100:
                         sx, sy = x, y
                         data.append(
                             [str(datetime.now()), x, y, (time_current - time_initial) / 1000000, marker, num.value])
-                else:
+                elif marker == 'start':
                     data.append([str(datetime.now()), x, y, (time_current - time_initial) / 1000000, marker, num.value])
                     marker = 'normal'
-                time_begin = time_current
-            else:
-                if marker == 'normal':
-                    if (time_current - time_begin) / 1000000 > 150:
-                        marker = 'stop'
-                        data.append(
-                            [str(datetime.now()), x, y, (time_current - time_initial) / 1000000, marker, num.value])
-                        marker = 'start'
     except:
         print('Выполнение закончилось')
     finally:
@@ -96,7 +100,7 @@ def record_data(num, st):
         clean_data(data)
         df = pd.DataFrame(data, columns=data_column)
         os.makedirs('mouse_data', exist_ok=True)
-        df.to_csv('mouse_data/' + datetime.now().strftime("%H.%M.%S_%Y-%m-%d") + '.csv', index=False)
+        df.to_csv('new_mouse_data/' + datetime.now().strftime("%H.%M.%S_%Y-%m-%d") + '.csv', index=False)
 
 
 if __name__ == '__main__':

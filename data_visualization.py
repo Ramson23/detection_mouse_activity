@@ -33,13 +33,13 @@ def create_picture(file_name, source_dir_name, cont_dir_name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
-    default_files = check_processed_file(os.listdir('./mouse_data'), 'draw_path/default')
-    union_files = check_processed_file(os.listdir('./mouse_union'), 'draw_path/union')
+    default_files = check_processed_file(os.listdir('./new_mouse_data'), 'new_draw_path/default')
+    union_files = check_processed_file(os.listdir('./new_mouse_union'), 'new_draw_path/union')
 
     print('Обрабатываемые файлы: ', default_files)
 
     for file in default_files:
-        create_picture(file, 'mouse_data', 'draw_path/default')
+        create_picture(file, 'new_mouse_data', 'new_draw_path/default')
 
     for file in union_files:
-        create_picture(file, 'mouse_union', 'draw_path/union')
+        create_picture(file, 'new_mouse_union', 'new_draw_path/union')

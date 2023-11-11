@@ -105,12 +105,12 @@ if __name__ == '__main__':
 
     if 'mouse_union' in lst_dir:
 
-        all_mouse_file = check_processed_file(os.listdir('./mouse_union'), 'extracted_data')
+        all_mouse_file = check_processed_file(os.listdir('./new_mouse_union'), 'new_extracted_data')
 
         for file in all_mouse_file:
 
-            df_default = pd.read_csv('mouse_data/' + file)
-            df_union = pd.read_csv('mouse_union/' + file)
+            df_default = pd.read_csv('new_mouse_data/' + file)
+            df_union = pd.read_csv('new_mouse_union/' + file)
             df_out = pd.DataFrame(columns=output_columns)
 
             ls_default = extract_segments(df_default)
@@ -127,5 +127,5 @@ if __name__ == '__main__':
                 exc_row = [[section_count_ratio, section_count_ratio_str, max_angle, max_section, average_section, square, time, condition]]
                 df_out = pd.concat([df_out, pd.DataFrame(data=exc_row, columns=output_columns)], ignore_index=True)
 
-            df_out.to_csv('extracted_data/' + file, index=False)
-            print('Файл extracted_data/' + file + ' успешно обработан')
+            df_out.to_csv('new_extracted_data/' + file, index=False)
+            print('Файл new_extracted_data/' + file + ' успешно обработан')
