@@ -2,7 +2,11 @@ import pandas as pd
 import os
 
 from check_file import check_processed_file
-from geometry_operations import get_angle, get_dist, get_dist_point_line
+from geometry_operations import (
+    get_dist,
+    get_dist_point_line,
+    get_angle_between_vector,
+)
 
 """
 В этом файле происходит выделение признаков из сырых данных. Сырые данные разделены на участки,
@@ -22,18 +26,16 @@ from geometry_operations import get_angle, get_dist, get_dist_point_line
 
 def extract_segments(df):
     output_list = []
-    internal_index = 0
+    internal_index = -1
 
     for i in range(df.shape[0]):
 
         row = df.iloc[i]
         if row.Marker == 'start':
             output_list.append([])
+            internal_index += 1
 
         output_list[internal_index].append(row)
-
-        if row.Marker == 'stop':
-            internal_index += 1
 
     return output_list
 
@@ -55,7 +57,7 @@ def calculate_section(notes):
 
 
 def calculate_angle(notes):
-    max_angle = 0
+    angle_max = 0
     for i in range(len(notes) - 2):
         x_1 = notes[i].X
         y_1 = notes[i].Y
@@ -64,14 +66,12 @@ def calculate_angle(notes):
         x_3 = notes[i + 2].X
         y_3 = notes[i + 2].Y
 
-        first_angle = get_angle(x_1, y_1, x_2, y_2)
-        second_angle = get_angle(x_2, y_2, x_3, y_3)
-        curr_angle = abs(second_angle - first_angle)
+        curr_angle = get_angle_between_vector(x_2 - x_1, y_2 - y_1, x_3 - x_2, y_3 - y_2)
 
-        if curr_angle > max_angle:
-            max_angle = curr_angle
+        if curr_angle > angle_max:
+            angle_max = curr_angle
 
-    return max_angle
+    return angle_max
 
 
 def calculate_square(notes):
@@ -96,10 +96,10 @@ def calculate_condition(notes):
     return notes[0].Condition
 
 
-
 if __name__ == '__main__':
 
-    output_columns = ['section_count_ratio', 'section_count_ratio_str',  'max_angle', 'max_section', 'average_section', 'square', 'time', 'condition']
+    output_columns = ['section_count_ratio', 'section_count_ratio_str', 'max_angle', 'max_section', 'average_section',
+                      'square', 'time', 'condition']
     path = './'
     lst_dir = os.listdir(path)
 
@@ -124,7 +124,9 @@ if __name__ == '__main__':
                 square = calculate_square(default_seg)
                 time = calculate_time(union_seg)
                 condition = calculate_condition(union_seg)
-                exc_row = [[section_count_ratio, section_count_ratio_str, max_angle, max_section, average_section, square, time, condition]]
+                exc_row = [
+                    [section_count_ratio, section_count_ratio_str, max_angle, max_section, average_section, square,
+                     time, condition]]
                 df_out = pd.concat([df_out, pd.DataFrame(data=exc_row, columns=output_columns)], ignore_index=True)
 
             df_out.to_csv('new_extracted_data/' + file, index=False)

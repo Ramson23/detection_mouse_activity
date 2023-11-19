@@ -99,7 +99,7 @@ def record_data(num, st):
         print('Данные собраны')
         clean_data(data)
         df = pd.DataFrame(data, columns=data_column)
-        os.makedirs('mouse_data', exist_ok=True)
+        os.makedirs('new_mouse_data', exist_ok=True)
         df.to_csv('new_mouse_data/' + datetime.now().strftime("%H.%M.%S_%Y-%m-%d") + '.csv', index=False)
 
 

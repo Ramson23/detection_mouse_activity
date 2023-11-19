@@ -32,3 +32,14 @@ def get_dist_point_line(pointX, pointY, lineX1, lineY1, lineX2, lineY2):
     c = lineX2 * lineY1 - lineX1 * lineY2
     dis = (math.fabs(a * pointX + b * pointY + c)) / (math.pow(a * a + b * b, 0.5))
     return dis
+
+
+def get_angle_between_vector(x1, y1, x2, y2):
+    if (x1 == 0 and y1 == 0) or (x2 == 0 and y2 == 0):
+        return 0
+
+    sc = x1 * x2 + y1 * y2
+    return math.acos(
+        sc /
+        math.sqrt((x1 ** 2 + y1 ** 2) * (x2 ** 2 + y2 ** 2))
+    ) * 180 / math.pi
