@@ -117,13 +117,13 @@ if __name__ == '__main__':
     path = './'
     lst_dir = os.listdir(path)
 
-    if 'mouse_union' in lst_dir:
+    if 'new_mouse_union' in lst_dir:
 
         all_mouse_file = check_processed_file(os.listdir('./new_mouse_union'), 'new_extracted_data')
 
         for file in all_mouse_file:
 
-            df_default = pd.read_csv('new_mouse_data/' + file)
+            df_default = pd.read_csv('new_mouse_data_sep/' + file)
             df_union = pd.read_csv('new_mouse_union/' + file)
             df_out = pd.DataFrame(columns=output_columns)
 

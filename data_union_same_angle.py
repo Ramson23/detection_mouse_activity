@@ -14,13 +14,13 @@ path = './'
 lst_dir = os.listdir(path)
 threshold = 7
 
-if 'new_mouse_data' in lst_dir:
+if 'new_mouse_data_sep' in lst_dir:
 
-    all_mouse_file = check_processed_file(os.listdir('./new_mouse_data'), 'new_mouse_union')
+    all_mouse_file = check_processed_file(os.listdir('./new_mouse_data_sep'), 'new_mouse_union')
 
     for mouse_file in all_mouse_file:
 
-        df = pd.read_csv("new_mouse_data/" + mouse_file)
+        df = pd.read_csv("new_mouse_data_sep/" + mouse_file)
 
         first_row = df.iloc[[0]]
         x_prev = first_row.X.iloc[0]
