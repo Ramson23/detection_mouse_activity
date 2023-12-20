@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from statistics import median
 
 from check_file import check_processed_file
 from geometry_operations import (
@@ -41,19 +42,16 @@ def extract_segments(df):
 
 
 def calculate_section(notes):
-    max_sec = 0
-    all_sec = 0
+    secs = []
     for i in range(len(notes) - 1):
         x_1 = notes[i].X
         y_1 = notes[i].Y
         x_2 = notes[i + 1].X
         y_2 = notes[i + 1].Y
         curr_sec = get_dist(x_1, y_1, x_2, y_2)
-        all_sec += curr_sec
-        if curr_sec > max_sec:
-            max_sec = curr_sec
+        secs.append(curr_sec)
 
-    return all_sec / (len(notes) - 1), max_sec
+    return (sum(secs) / (len(secs))), max(secs), median(secs)
 
 
 def calculate_angle(notes):
@@ -89,7 +87,11 @@ def calculate_square(notes):
 
 
 def calculate_time(notes):
-    return notes[-1]['T'] - notes[0]['T']
+    times = []
+    for i in range(len(notes)-1):
+        times.append(notes[i+1]['T'] - notes[i]['T'])
+
+    return (notes[-1]['T'] - notes[0]['T']), median(times), (sum(times) / len(times))
 
 
 def calculate_condition(notes):
@@ -98,8 +100,20 @@ def calculate_condition(notes):
 
 if __name__ == '__main__':
 
-    output_columns = ['section_count_ratio', 'section_count_ratio_str', 'max_angle', 'max_section', 'average_section',
-                      'square', 'time', 'condition']
+    output_columns = [
+        'section_count_before',
+        'section_count_after',
+        'angle_max',
+        'section_max_value',
+        'section_average_value',
+        'section_median_value',
+        'square',
+        'time',
+        'time_median',
+        'time_average',
+        'condition',
+    ]
+
     path = './'
     lst_dir = os.listdir(path)
 
@@ -117,16 +131,27 @@ if __name__ == '__main__':
             ls_union = extract_segments(df_union)
 
             for union_seg, default_seg in zip(ls_union, ls_default):
-                section_count_ratio = (len(union_seg) - 1) / (len(default_seg) - 1)
-                section_count_ratio_str = f'{(len(union_seg) - 1)} / {(len(default_seg) - 1)}'
-                average_section, max_section = calculate_section(union_seg)
+                section_count_before = len(default_seg) - 1
+                section_count_after = len(union_seg) - 1
+                average_section, max_section, median_section = calculate_section(union_seg)
                 max_angle = calculate_angle(union_seg)
                 square = calculate_square(default_seg)
-                time = calculate_time(union_seg)
+                time, time_median, time_average = calculate_time(union_seg)
                 condition = calculate_condition(union_seg)
                 exc_row = [
-                    [section_count_ratio, section_count_ratio_str, max_angle, max_section, average_section, square,
-                     time, condition]]
+                    [section_count_before,
+                     section_count_after,
+                     max_angle,
+                     max_section,
+                     average_section,
+                     median_section,
+                     square,
+                     time,
+                     time_median,
+                     time_average,
+                     condition
+                     ]
+                ]
                 df_out = pd.concat([df_out, pd.DataFrame(data=exc_row, columns=output_columns)], ignore_index=True)
 
             df_out.to_csv('new_extracted_data/' + file, index=False)

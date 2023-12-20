@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 from check_file import check_processed_file
-from geometry_operations import get_angle
+from geometry_operations import get_angle_between_vector
 
 """
 В этом файле происходит сокращение исходного датасета путем
@@ -12,7 +12,7 @@ from geometry_operations import get_angle
 
 path = './'
 lst_dir = os.listdir(path)
-threshold = 10
+threshold = 7
 
 if 'mouse_data' in lst_dir:
 
@@ -47,10 +47,14 @@ if 'mouse_data' in lst_dir:
                     x_next = next_row.X.iloc[0]
                     y_next = next_row.Y.iloc[0]
 
-                    angle_prev = get_angle(x_prev, y_prev, x_curr, y_curr)
-                    angle_curr = get_angle(x_curr, y_curr, x_next, y_next)
+                    angle_between = get_angle_between_vector(
+                        x_curr-x_prev,
+                        y_curr-y_prev,
+                        x_next-x_curr,
+                        y_next-y_curr
+                    )
 
-                    if abs(angle_curr - angle_prev) > threshold:
+                    if angle_between > threshold:
                         union_df = pd.concat([union_df, row], ignore_index=True)
                         x_prev = x_curr
                         y_prev = y_curr
