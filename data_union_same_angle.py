@@ -16,11 +16,11 @@ threshold = 7
 
 if 'mouse_data' in lst_dir:
 
-    all_mouse_file = check_processed_file(os.listdir('./new_mouse_data'), 'new_mouse_union')
+    all_mouse_file = check_processed_file(os.listdir('./mouse_data'), 'mouse_union')
 
     for mouse_file in all_mouse_file:
 
-        df = pd.read_csv("new_mouse_data/" + mouse_file)
+        df = pd.read_csv("mouse_data/" + mouse_file)
 
         first_row = df.iloc[[0]]
         x_prev = first_row.X.iloc[0]
@@ -61,5 +61,5 @@ if 'mouse_data' in lst_dir:
             else:
                 union_df = pd.concat([union_df, row], ignore_index=True)
 
-        union_df.to_csv('new_mouse_union/' + mouse_file, index=False)
-        print('Файл new_mouse_union/' + mouse_file + ' успешно сохранен')
+        union_df.to_csv('mouse_union/' + mouse_file, index=False)
+        print('Файл mouse_union/' + mouse_file + ' успешно сохранен')
