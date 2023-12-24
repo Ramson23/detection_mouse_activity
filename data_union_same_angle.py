@@ -14,52 +14,54 @@ path = './'
 lst_dir = os.listdir(path)
 threshold = 7
 
-if 'new_mouse_data_sep' in lst_dir:
+if __name__ == '__main__':
 
-    all_mouse_file = check_processed_file(os.listdir('./new_mouse_data_sep'), 'new_mouse_union')
+    if 'new_mouse_data_sep' in lst_dir:
 
-    for mouse_file in all_mouse_file:
+        all_mouse_file = check_processed_file(os.listdir('./new_mouse_data_sep'), 'new_mouse_union')
 
-        df = pd.read_csv("new_mouse_data_sep/" + mouse_file)
+        for mouse_file in all_mouse_file:
 
-        first_row = df.iloc[[0]]
-        x_prev = first_row.X.iloc[0]
-        y_prev = first_row.Y.iloc[0]
+            df = pd.read_csv("new_mouse_data_sep/" + mouse_file)
 
-        union_df = pd.DataFrame(data=first_row)
+            first_row = df.iloc[[0]]
+            x_prev = first_row.X.iloc[0]
+            y_prev = first_row.Y.iloc[0]
 
-        for i in range(1, df.shape[0]):
+            union_df = pd.DataFrame(data=first_row)
 
-            row = df.iloc[[i]]
+            for i in range(1, df.shape[0]):
 
-            if (i + 1) < df.shape[0]:
-                next_row = df.iloc[[i+1]]
+                row = df.iloc[[i]]
 
-                if row.Marker.iloc[0] == 'stop':
-                    union_df = pd.concat([union_df, row], ignore_index=True)
-                elif row.Marker.iloc[0] == 'start':
-                    union_df = pd.concat([union_df, row], ignore_index=True)
-                    x_prev = row.X.iloc[0]
-                    y_prev = row.Y.iloc[0]
-                else:
-                    x_curr = row.X.iloc[0]
-                    y_curr = row.Y.iloc[0]
-                    x_next = next_row.X.iloc[0]
-                    y_next = next_row.Y.iloc[0]
+                if (i + 1) < df.shape[0]:
+                    next_row = df.iloc[[i+1]]
 
-                    angle_between = get_angle_between_vector(
-                        x_curr-x_prev,
-                        y_curr-y_prev,
-                        x_next-x_curr,
-                        y_next-y_curr
-                    )
-
-                    if angle_between > threshold:
+                    if row.Marker.iloc[0] == 'stop':
                         union_df = pd.concat([union_df, row], ignore_index=True)
-                        x_prev = x_curr
-                        y_prev = y_curr
-            else:
-                union_df = pd.concat([union_df, row], ignore_index=True)
+                    elif row.Marker.iloc[0] == 'start':
+                        union_df = pd.concat([union_df, row], ignore_index=True)
+                        x_prev = row.X.iloc[0]
+                        y_prev = row.Y.iloc[0]
+                    else:
+                        x_curr = row.X.iloc[0]
+                        y_curr = row.Y.iloc[0]
+                        x_next = next_row.X.iloc[0]
+                        y_next = next_row.Y.iloc[0]
 
-        union_df.to_csv('new_mouse_union/' + mouse_file, index=False)
-        print('Файл new_mouse_union/' + mouse_file + ' успешно сохранен')
+                        angle_between = get_angle_between_vector(
+                            x_curr-x_prev,
+                            y_curr-y_prev,
+                            x_next-x_curr,
+                            y_next-y_curr
+                        )
+
+                        if angle_between > threshold:
+                            union_df = pd.concat([union_df, row], ignore_index=True)
+                            x_prev = x_curr
+                            y_prev = y_curr
+                else:
+                    union_df = pd.concat([union_df, row], ignore_index=True)
+
+            union_df.to_csv('new_mouse_union/' + mouse_file, index=False)
+            print('Файл new_mouse_union/' + mouse_file + ' успешно сохранен')
