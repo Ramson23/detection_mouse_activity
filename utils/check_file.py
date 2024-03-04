@@ -1,9 +1,9 @@
 import os
 
 
-def check_processed_file(unprocessed_mouse_file, dir_name):
+def check_processed_file(unprocessed_mouse_file, dir_name, main_dir):
     os.makedirs(dir_name, exist_ok=True)
-    existed_mouse_file = os.listdir('./' + dir_name)
+    existed_mouse_file = os.listdir(main_dir + '/' + dir_name)
 
     for i, file in enumerate(unprocessed_mouse_file):
         unprocessed_mouse_file[i] = file[:-4]

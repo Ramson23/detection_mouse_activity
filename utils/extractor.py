@@ -59,7 +59,14 @@ class Extractor:
         for union_seg, default_seg in zip(ls_union, ls_default):
             section_count_before = len(default_seg) - 1
             section_count_after = len(union_seg) - 1
-            average_section, max_section, median_section = Extractor.calculate_section(union_seg)
+            (average_section,
+             max_section_1,
+             max_section_2,
+             max_section_3,
+             max_section_4,
+             max_section_5,
+             median_section
+             ) = Extractor.calculate_section(union_seg)
             max_angle = Extractor.calculate_angle(union_seg)
             square = Extractor.calculate_square(default_seg)
             time, time_median, time_average = Extractor.calculate_time(union_seg)
@@ -68,7 +75,11 @@ class Extractor:
                 [section_count_before,
                  section_count_after,
                  max_angle,
-                 max_section,
+                 max_section_1,
+                 max_section_2,
+                 max_section_3,
+                 max_section_4,
+                 max_section_5,
                  average_section,
                  median_section,
                  square,
