@@ -29,7 +29,11 @@ class Extractor:
         'section_count_before',
         'section_count_after',
         'angle_max',
-        'section_max_value',
+        'section_max1_value',
+        'section_max2_value',
+        'section_max3_value',
+        'section_max4_value',
+        'section_max5_value',
         'section_average_value',
         'section_median_value',
         'square',
@@ -179,8 +183,19 @@ class Extractor:
             y_2 = notes[i + 1].Y
             curr_sec = get_dist(x_1, y_1, x_2, y_2)
             secs.append(curr_sec)
+        secs.sort(reverse=True)
 
-        return (sum(secs) / (len(secs))), max(secs), median(secs)
+        if len(secs) < 5:
+            max_secs = secs[:]
+            max_secs.extend([0] * (5 - len(secs)))
+        else:
+            max_secs = secs[:5]
+
+        return (
+            (sum(secs) / (len(secs))),
+            *max_secs,
+            median(secs)
+        )
 
     @staticmethod
     def calculate_angle(notes):
