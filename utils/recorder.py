@@ -93,7 +93,10 @@ class Recorder(Process):
             print('Выполнение закончилось')
         finally:
             self.all_data.extend(self.data)
-            self.all_data[-1][-2] = 'stop'  # присваиваем последнему маркеру значение stop
+            if self.all_data[-1][-2] == 'start':
+                self.all_data.pop()
+            else:
+                self.all_data[-1][-2] = 'stop'  # присваиваем последнему маркеру значение stop
             #print('Данные собраны')
             self.clean_data()
             df = pd.DataFrame(self.all_data, columns=self.data_column)
