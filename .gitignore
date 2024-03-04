@@ -1,6 +1,6 @@
 /.idea/
-/mouse_data/
-/mouse_union/
+/data/mouse_data/
+/data/mouse_union/
 /old_approach/extracted_features/
 /old_approach/mouse_data/
-/extracted_data
+/data/extracted_data
