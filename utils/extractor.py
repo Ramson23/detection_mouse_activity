@@ -29,15 +29,20 @@ class Extractor:
         'section_count_before',
         'section_count_after',
         'angle_max',
-        'section_max1_value',
-        'section_max2_value',
-        'section_max3_value',
-        'section_max4_value',
-        'section_max5_value',
-        'section_average_value',
-        'section_median_value',
+        'section_max1',
+        'section_max2',
+        'section_max3',
+        'section_max4',
+        'section_max5',
+        'section_median',
+        'section_average',
         'square',
         'time',
+        'time_max1',
+        'time_max2',
+        'time_max3',
+        'time_max4',
+        'time_max5',
         'time_median',
         'time_average',
         'condition',
@@ -59,17 +64,25 @@ class Extractor:
         for union_seg, default_seg in zip(ls_union, ls_default):
             section_count_before = len(default_seg) - 1
             section_count_after = len(union_seg) - 1
-            (average_section,
-             max_section_1,
+            (max_section_1,
              max_section_2,
              max_section_3,
              max_section_4,
              max_section_5,
-             median_section
+             median_section,
+             average_section,
              ) = Extractor.calculate_section(union_seg)
             max_angle = Extractor.calculate_angle(union_seg)
             square = Extractor.calculate_square(default_seg)
-            time, time_median, time_average = Extractor.calculate_time(union_seg)
+            (time,
+             max_time_1,
+             max_time_2,
+             max_time_3,
+             max_time_4,
+             max_time_5,
+             time_median,
+             time_average
+             ) = Extractor.calculate_time(union_seg)
             condition = Extractor.calculate_condition(union_seg)
             exc_row = [
                 [section_count_before,
@@ -80,10 +93,15 @@ class Extractor:
                  max_section_3,
                  max_section_4,
                  max_section_5,
-                 average_section,
                  median_section,
+                 average_section,
                  square,
                  time,
+                 max_time_1,
+                 max_time_2,
+                 max_time_3,
+                 max_time_4,
+                 max_time_5,
                  time_median,
                  time_average,
                  condition
@@ -203,9 +221,9 @@ class Extractor:
             max_secs = secs[:5]
 
         return (
-            (sum(secs) / (len(secs))),
             *max_secs,
-            median(secs)
+            median(secs),
+            (sum(secs) / (len(secs))),
         )
 
     @staticmethod
@@ -246,7 +264,20 @@ class Extractor:
         for i in range(len(notes) - 1):
             times.append(notes[i + 1]['T'] - notes[i]['T'])
 
-        return (notes[-1]['T'] - notes[0]['T']), median(times), (sum(times) / len(times))
+        times.sort(reverse=True)
+
+        if len(times) < 5:
+            max_times = times[:]
+            max_times.extend([0] * (5 - len(times)))
+        else:
+            max_times = times[:5]
+
+        return (
+            (notes[-1]['T'] - notes[0]['T']),
+            *max_times,
+            median(times),
+            (sum(times) / len(times))
+        )
 
     @staticmethod
     def calculate_condition(notes):

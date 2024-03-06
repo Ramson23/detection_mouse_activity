@@ -58,34 +58,39 @@ if __name__ == '__main__':
     logger.info('start Thread')
 
     while start_flag:
-        logger.info('start ждем')
-        frag = rec.q_data.get()
-
-        logger.info(f'con in proc: {curr_condition}')
-
-        rec.q_changes.put([True, curr_condition])
-
-        raw_data = rec.convert_to_df(frag)
-
-        exc = Extractor(raw_data)
-        exc.separate_activity_segment()
-        features = exc.extract()
-
         try:
-            features['section_rel'] = features['section_count_after'] / features['section_count_before']
-            features = features.drop(['condition'], axis=1)
-            scaled_data = scaler.transform(features.values)
-            scale_feature = pd.DataFrame(scaled_data, index=features.index, columns=features.columns)
-            logger.info(model)
-            pred = model.predict(scale_feature)
+            logger.info('start ждем')
+            frag = rec.q_data.get()
+
+            logger.info(f'con in proc: {curr_condition}')
+
+            rec.q_changes.put([True, curr_condition])
+
+            raw_data = rec.convert_to_df(frag)
+
+            exc = Extractor(raw_data)
+            exc.separate_activity_segment()
+            features = exc.extract()
+
+            sys.stdout.write(f'0')
         except Exception as err:
-            logger.info(f'model: {err}')
+            logger.info(err)
 
-        logger.info(f'pred: {pred}')
-
-        logger.info('start пишем')
-        sys.stdout.write(f'{1 if sum(pred)/len(pred) > 0.5 else 0}')
-        logger.info('start написали')
+        # try:
+        #     features['section_rel'] = features['section_count_after'] / features['section_count_before']
+        #     features = features.drop(['condition'], axis=1)
+        #     scaled_data = scaler.transform(features.values)
+        #     scale_feature = pd.DataFrame(scaled_data, index=features.index, columns=features.columns)
+        #     logger.info(model)
+        #     pred = model.predict(scale_feature)
+        # except Exception as err:
+        #     logger.info(f'model: {err}')
+        #
+        # logger.info(f'pred: {pred}')
+        #
+        # logger.info('start пишем')
+        # sys.stdout.write(f'{1 if sum(pred)/len(pred) > 0.5 else 0}')
+        # logger.info('start написали')
 
     rec.q_changes.put([False, curr_condition])
     rec.join()
