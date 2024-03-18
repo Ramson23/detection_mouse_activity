@@ -24,11 +24,16 @@ from utils.geometry_operations import (
 
 
 class Extractor:
-
     output_columns = [
         'section_count_before',
         'section_count_after',
-        'angle_max',
+        'angle_max1',
+        'angle_max2',
+        'angle_max3',
+        'angle_max4',
+        'angle_max5',
+        'angle_median',
+        'angle_average',
         'section_max1',
         'section_max2',
         'section_max3',
@@ -36,6 +41,7 @@ class Extractor:
         'section_max5',
         'section_median',
         'section_average',
+        'square_line',
         'square',
         'time',
         'time_max1',
@@ -72,8 +78,19 @@ class Extractor:
              median_section,
              average_section,
              ) = Extractor.calculate_section(union_seg)
-            max_angle = Extractor.calculate_angle(union_seg)
-            square = Extractor.calculate_square(default_seg)
+            (max_angle_1,
+             max_angle_2,
+             max_angle_3,
+             max_angle_4,
+             max_angle_5,
+             median_angle,
+             average_angle,
+             ) = Extractor.calculate_angle(union_seg)
+
+            (square_line,
+             square,
+             ) = Extractor.calculate_square(default_seg)
+
             (time,
              max_time_1,
              max_time_2,
@@ -87,7 +104,13 @@ class Extractor:
             exc_row = [
                 [section_count_before,
                  section_count_after,
-                 max_angle,
+                 max_angle_1,
+                 max_angle_2,
+                 max_angle_3,
+                 max_angle_4,
+                 max_angle_5,
+                 median_angle,
+                 average_angle,
                  max_section_1,
                  max_section_2,
                  max_section_3,
@@ -95,6 +118,7 @@ class Extractor:
                  max_section_5,
                  median_section,
                  average_section,
+                 square_line,
                  square,
                  time,
                  max_time_1,
@@ -220,15 +244,22 @@ class Extractor:
         else:
             max_secs = secs[:5]
 
-        return (
-            *max_secs,
-            median(secs),
-            (sum(secs) / (len(secs))),
-        )
+        if len(secs) == 0:
+            return (
+                *max_secs,
+                0,
+                0
+            )
+        else:
+            return (
+                *max_secs,
+                median(secs),
+                (sum(secs) / (len(secs))),
+            )
 
     @staticmethod
     def calculate_angle(notes):
-        angle_max = 0
+        angels = []
         for i in range(len(notes) - 2):
             x_1 = notes[i].X
             y_1 = notes[i].Y
@@ -238,11 +269,27 @@ class Extractor:
             y_3 = notes[i + 2].Y
 
             curr_angle = get_angle_between_vector(x_2 - x_1, y_2 - y_1, x_3 - x_2, y_3 - y_2)
+            angels.append(curr_angle)
 
-            if curr_angle > angle_max:
-                angle_max = curr_angle
+        angels.sort(reverse=True)
 
-        return angle_max
+        if len(angels) < 5:
+            max_angels = angels[:]
+            max_angels.extend([0] * (5 - len(angels)))
+        else:
+            max_angels = angels[:5]
+
+        if len(angels) == 0:
+            return (
+                *max_angels,
+                0,
+                0
+            )
+        return (
+            *max_angels,
+            median(angels),
+            (sum(angels) / (len(angels))),
+        )
 
     @staticmethod
     def calculate_square(notes):
@@ -256,7 +303,10 @@ class Extractor:
             if el.Marker == 'normal':
                 sum_dist += get_dist_point_line(el.X, el.Y, line_x_1, line_y_1, line_x_2, line_y_2)
 
-        return sum_dist / (len(notes) - 2)
+        return (
+            get_dist(line_x_1, line_y_1, line_x_2, line_y_2),
+            sum_dist,
+        )
 
     @staticmethod
     def calculate_time(notes):
@@ -272,6 +322,12 @@ class Extractor:
         else:
             max_times = times[:5]
 
+        if len(times) == 0:
+            return (
+                *max_times,
+                0,
+                0
+            )
         return (
             (notes[-1]['T'] - notes[0]['T']),
             *max_times,
@@ -296,4 +352,3 @@ class Extractor:
                 i += 1
 
         return df
-
